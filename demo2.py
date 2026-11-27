@@ -50,6 +50,34 @@ def test_search_box():
     search_button_suggestion = page.get_by_role("button", name="提交")
     expect(search_button_suggestion).to_be_visible()
 
- 
+# 尝试写第三个case, 测试搜索结果部分
+def test_search_result():
+    # 验证搜索部分， 输入关键字后可以搜索到对应的结果
+    search_box = page.locator("#kw")
+    search_box.fill("包钢股份")
+    search_button = page.get_by_role("button", name="查询")
+    search_button.click()
+    result_name = page.locator(".search-result .result-item").first
+    expect(result_name.locator("p.name")).to_have_text("包钢股份")
+    # expect(result_name.locator("p").nth(1)).to_have_text("代码: 600010")
+    
+    # 上面一行代码运行有误, 请注意中英文半角冒号以及空格, 代码中不易发现,请使用工具check
+    expect(result_name.locator("p").nth(1)).to_have_text("代码：600010")
+
+# 尝试写第四个case, 测试提交建议按钮
+def test_submit_button():
+    suggestion_text = page.locator("#suggestion")
+    submit_button = page.get_by_role("button", name="提交")
+    suggestion_text.fill("Hello, World!")
+    
+    # Verify the alert before accepting it.
+    def handle_dialog(dialog):
+        assert dialog.message == "感谢您的支持"
+        dialog.accept()
+
+    page.once("dialog", handle_dialog)
+    submit_button.click()
+    # 弹出的窗口有问题, 明天找时间再看
+
 
 
